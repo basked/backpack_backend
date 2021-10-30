@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UserAuthController extends Controller
+class AuthController extends Controller
 {
     public function register(Request $request)
     {
@@ -29,7 +29,6 @@ class UserAuthController extends Controller
         ]);
 
         $accessToken = $user->createToken('authToken')->accessToken;
-       dd( $accessToken);
         return response([ 'user' => $user, 'access_token' => $accessToken]);
     }
 
