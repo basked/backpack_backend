@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends BaseController
 {
@@ -54,7 +57,6 @@ class UserController extends BaseController
             return $this->sendError('User not found.');
         }
         return $this->sendResponse(UserResource::make($user), 'User retrieved successfully.');
-
     }
 
     /**
@@ -67,7 +69,6 @@ class UserController extends BaseController
     public function update(Request $request, User $user)
     {
         $input = $request->all();
-//        dd($request);
         $validator = Validator::make($input, [
             'name' => 'required|unique:users',
             'email' => 'required|unique:users',
@@ -81,7 +82,6 @@ class UserController extends BaseController
         $user->password = Hash::make($input['password']);
         $user->save();
         return $this->sendResponse(UserResource::make($user), 'User updated successfully.');
-
     }
 
     /**
@@ -97,6 +97,14 @@ class UserController extends BaseController
         }
         $user->delete();
         return $this->sendResponse(UserResource::make($user), 'User deleted successfully.');
-
     }
+
+
+    public function me()
+    {
+        if (Gate::allows('Assign Role')) {
+            return $this->sendResponse(UserResource::make(Auth::user()), 'User deleted successfully.');
+        }
+    }
+
 }
